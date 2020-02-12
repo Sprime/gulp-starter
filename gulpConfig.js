@@ -3,7 +3,7 @@
 let config = {
   src: './src',
   build: './build',
-  blocks: './blocks',
+  blocks: './src/blocks',
   styles: {
     src: './src/styles/styles.scss',
     watch: './src/styles/**/*.scss',
@@ -15,6 +15,12 @@ let config = {
     watch: './src/templates/**/*.html',
     blocks: './src/blocks/**/*.html',
     dest: './build'
+  },
+  scripts: {
+    src: './src/scripts/index.js',
+    watch: './src/scripts/**/*.js',
+    blocks: './src/blocks/**/*.js',
+    dest: './build/js'
   }
 };
 

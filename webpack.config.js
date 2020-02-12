@@ -7,7 +7,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 //Config
-const config = require('gulpConfig');
+const config = require('./gulpConfig');
 
 // Plugins
 const WebpackNotifierPlugin = require('webpack-notifier');

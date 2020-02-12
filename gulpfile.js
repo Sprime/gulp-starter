@@ -24,6 +24,9 @@ const objectFitImages = require('postcss-object-fit-images');
 const gulpStylelint = require('gulp-stylelint');
 const prettyhtml = require('gulp-pretty-html');
 const nunjucksRender = require('gulp-nunjucks-render');
+const webpack = require('webpack');
+const gulpWebpack = require('webpack-stream');
+const gulpEslint = require('gulp-eslint');
 
 // Глобальные настройки этого запуска
 const config = require('./gulpConfig');
@@ -117,7 +120,7 @@ exports.scss = scss;
 function stylelint() {
   return src([config.styles.watch, config.styles.blocks])
     .pipe(gulpStylelint({
-      failAfterError: isProd,
+      failAfterError: true,
       reporters: [{formatter: 'string', console: true}],
       syntax: 'scss'
     }));
@@ -136,8 +139,8 @@ function templates() {
     }))
     .pipe(nunjucksRender({
       path: [
-        './src/templates',
-        './src/blocks'
+        `${config.src}/templates`,
+        `${config.blocks}`
       ]
     }))
     .pipe(prettyhtml(prettyOption))
@@ -151,15 +154,40 @@ function templates() {
 exports.templates = templates;
 
 
+// Скрипты
+function scripts() {
+  return src(config.scripts.src)
+    .pipe(plumber())
+    .pipe(gulpWebpack(require('./webpack.config'), webpack))
+    .pipe(gulpIf(isProd, rename({
+      suffix: '.min'
+    })))
+    .pipe(dest(config.scripts.dest))
+    .pipe(debug({
+      title: 'JS files:'
+    }));
+}
+exports.scripts = scripts;
+
+function esLint() {
+  return src(config.scripts.src)
+    .pipe(gulpEslint())
+    .pipe(gulpEslint.format())
+    .pipe(gulpEslint.failAfterError())
+}
+exports.esLint = esLint;
+
+
 exports.default = series(
   parallel(clean),
   parallel(templates),
-  parallel(scss)
+  parallel(scss, scripts)
 );
 
 exports.build = series(
   parallel(clean),
-  parallel(scss, stylelint)
+  parallel(templates),
+  parallel(scss, stylelint, scripts, esLint)
 );
 
 

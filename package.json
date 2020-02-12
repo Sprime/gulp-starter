@@ -27,6 +27,7 @@
     "gulp-clean-css": "^4.2.0",
     "gulp-cssbeautify": "^2.0.1",
     "gulp-debug": "^4.0.0",
+    "gulp-eslint": "^6.0.0",
     "gulp-if": "^3.0.0",
     "gulp-nunjucks-render": "^2.2.3",
     "gulp-plumber": "^1.2.1",
