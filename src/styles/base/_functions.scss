@@ -1,0 +1,18 @@
+@function getMapValue($mapName, $varName) {
+    @if (map-has-key($mapName, $varName)) {
+        @if (type-of(map-get($mapName, $varName)) == map and map-has-key(map-get($mapName, $varName), 'value')) {
+            @return map-get(map-get($mapName, $varName), 'value');
+        } @else {
+            @return map-get($mapName, $varName);
+        }
+    } @else {
+        @return '';
+    }
+}
+
+@function mapMerge($oldMap, $newMap) {
+    @each $key, $value in $newMap {
+        $oldMap: map-merge($oldMap, ($key:('value': $value)));
+    }
+    @return $oldMap;
+}

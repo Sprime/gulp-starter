@@ -1,0 +1,50 @@
+{% set site_title = site_title | default('My site') %}
+{% set site_description = site_description | default('My awesome site') %}
+{% set site_keywords = site_keywords | default('my, awesome, site') %}
+{% set site_url = 'https://www.sitename.com' %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="format-detection" content="date=no">
+  <meta name="format-detection" content="address=no">
+  <meta name="format-detection" content="email=no">
+  <meta content="notranslate" name="google">
+
+  <title>{{ site_title }}</title>
+  <meta name="description" content="{{ site_description }}">
+  <meta name="keywords" content="{{ site_keywords }}">
+
+  {% include "./favicons.html" %}
+
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site_url }}">
+  <meta property="og:title" content="Open Graph title">
+  <meta property="og:description" content="Open Graph description">
+  <meta property="og:image" content="{{ site_url }}/images/og-image.jpg">
+</head>
+<body{% if body_class %} class="{{ body_class }}"{% endif %}>
+
+<div class="sitepage">
+  <div class="sitepage-content">
+    {% include "../../blocks/header/header.html" %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  {% include "../../blocks/footer/footer.html" %}
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/vendor.js"></script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
