@@ -1,0 +1,39 @@
+$fontsPath: '../fonts';
+
+$fontFamily: (
+  'normal': (
+    '100': 'Thin',
+    '300': 'Light',
+    '400': 'Regular',
+    '500': 'Medium',
+    '700': 'Bold',
+    '900': 'Black'
+  ),
+  'italic': (
+    '100': 'Thin Italic',
+    '300': 'Light Italic',
+    '400': 'Italic',
+    '500': 'Medium Italic',
+    '700': 'Bold Italic',
+    '900': 'Black Italic'
+  ),
+);
+
+@each $style, $map in $fontFamily {
+  @each $weight, $name in $map {
+
+    @font-face {
+      font-family: 'Roboto';
+      font-style: unquote($style);
+      font-weight: unquote($weight);
+      src: url('#{$fontsPath}/roboto-#{unquote($weight)}-#{str-replace(unquote($name), ' ', '')}.eot');
+      src:
+        local('Roboto #{unquote($name)}'), local('Roboto-#{str-replace(unquote($name), ' ', '')}'),
+        url('#{$fontsPath}/roboto-#{unquote($weight)}-#{unquote($name)}.eot?#iefix') format('embedded-opentype'),
+        url('#{$fontsPath}/roboto-#{unquote($weight)}-#{unquote($name)}.woff2') format('woff2'),
+        url('#{$fontsPath}/roboto-#{unquote($weight)}-#{unquote($name)}.woff') format('woff'),
+        url('#{$fontsPath}/roboto-#{unquote($weight)}-#{unquote($name)}.ttf') format('truetype'),
+        url('#{$fontsPath}/roboto-#{unquote($weight)}-#{unquote($name)}.svg#Roboto') format('svg');
+    }
+  }
+}

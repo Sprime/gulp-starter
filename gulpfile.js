@@ -27,6 +27,17 @@ const nunjucksRender = require('gulp-nunjucks-render');
 const webpack = require('webpack');
 const gulpWebpack = require('webpack-stream');
 const gulpEslint = require('gulp-eslint');
+const imagemin = require('gulp-imagemin');
+const imageminPngquant = require('imagemin-pngquant');
+const imageminZopfli = require('imagemin-zopfli');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const imageminGiflossy = require('imagemin-giflossy');
+const imageminWebp = require('imagemin-webp');
+const webp = require('gulp-webp');
+const svg = require('gulp-svg-sprite');
+const spritesmith = require('gulp.spritesmith');
+const buffer = require('vinyl-buffer');
+const merge = require('merge-stream');
 
 // Глобальные настройки этого запуска
 const config = require('./gulpConfig');
@@ -110,12 +121,29 @@ function scss() {
     .pipe(plumber.stop())
     .pipe(gulpIf(isDev, sourcemaps.write()))
     .pipe(dest(config.styles.dest))
-    .pipe(debug({
-      title: 'SCSS:'
-    }))
     .pipe(browserSync.stream());
 }
 exports.scss = scss;
+
+function writeScssBlocks(cb) {
+  const newScssList = [];
+  let allBlocksWithScssFiles = getDirectories('scss');
+  allBlocksWithScssFiles.forEach(function(blockWithScssFile) {
+    let url = `${blockWithScssFile}/${blockWithScssFile}`;
+    if (newScssList.indexOf(url) > -1) return;
+    newScssList.push(url);
+  });
+  if (newScssList.length) {
+    let styleImports = '';
+    newScssList.forEach(function(src) {
+      styleImports += `@import '${src}';\n`;
+    });
+    fs.writeFileSync(config.src + '/styles/_blocks.scss', styleImports);
+    console.log('---------- Write blocks scss file');
+  }
+  cb();
+}
+exports.writeScssBlocks = writeScssBlocks;
 
 function stylelint() {
   return src([config.styles.watch, config.styles.blocks])
@@ -146,10 +174,7 @@ function templates() {
     .pipe(prettyhtml(prettyOption))
     .pipe(gulpIf(isProd, replace('.css', '.min.css')))
     .pipe(gulpIf(isProd, replace('.js', '.min.js')))
-    .pipe(dest(config.templates.dest))
-    .pipe(debug({
-      title: 'HTML:'
-    }));
+    .pipe(dest(config.templates.dest));
 }
 exports.templates = templates;
 
@@ -162,10 +187,7 @@ function scripts() {
     .pipe(gulpIf(isProd, rename({
       suffix: '.min'
     })))
-    .pipe(dest(config.scripts.dest))
-    .pipe(debug({
-      title: 'JS files:'
-    }));
+    .pipe(dest(config.scripts.dest));
 }
 exports.scripts = scripts;
 
@@ -178,16 +200,210 @@ function esLint() {
 exports.esLint = esLint;
 
 
+// Изображения
+function imgContent() {
+  return src(config.images.src)
+    .pipe(gulpIf(isProd, imagemin([
+      imageminGiflossy({
+        optimizationLevel: 3,
+        optimize: 3,
+        lossy: 2
+      }),
+      imageminPngquant({
+        speed: 5,
+        quality: [0.6, 0.8]
+      }),
+      imageminZopfli({
+        more: true
+      }),
+      imageminMozjpeg({
+        progressive: true,
+        quality: 90
+      }),
+      imagemin.svgo({
+        plugins: [
+          {removeViewBox: false},
+          {removeUnusedNS: false},
+          {removeUselessStrokeAndFill: false},
+          {cleanupIDs: false},
+          {removeComments: true},
+          {removeEmptyAttrs: true},
+          {removeEmptyText: true},
+          {collapseGroups: true}
+        ]
+      })
+    ])))
+    .pipe(dest(config.images.dest));
+}
+exports.imgContent = imgContent;
+
+function imgWebp() {
+  return src(config.images.webp)
+    .pipe(webp(gulpIf(isProd, imageminWebp({
+      lossless: true,
+      quality: 100,
+      alphaQuality: 100
+    }))))
+    .pipe(dest(config.images.dest));
+}
+exports.imgWebp = imgWebp;
+
+function imgTemp() {
+  return src(config.images.temp.src)
+    .pipe(gulpIf(isProd, imagemin([
+      imageminGiflossy({
+        optimizationLevel: 3,
+        optimize: 3,
+        lossy: 2
+      }),
+      imageminPngquant({
+        speed: 5,
+        quality: [0.6, 0.8]
+      }),
+      imageminZopfli({
+        more: true
+      }),
+      imageminMozjpeg({
+        progressive: true,
+        quality: 90
+      }),
+      imagemin.svgo({
+        plugins: [
+          {removeViewBox: false},
+          {removeUnusedNS: false},
+          {removeUselessStrokeAndFill: false},
+          {cleanupIDs: false},
+          {removeComments: true},
+          {removeEmptyAttrs: true},
+          {removeEmptyText: true},
+          {collapseGroups: true}
+        ]
+      })
+    ])))
+    .pipe(dest(config.images.temp.dest));
+}
+exports.imgTemp = imgTemp;
+
+
+// Спрайты изображений
+function spriteSVG() {
+  return src(config.sprites.svg.src)
+    .pipe(svg({
+      mode: {
+        stack: {
+          sprite: '../sprite.svg'
+        }
+      }
+    }))
+    .pipe(dest(config.sprites.dest));
+}
+exports.spriteSVG = spriteSVG;
+
+function spritePNG() {
+  let spriteData = src(config.sprites.png.src)
+    .pipe(spritesmith({
+      imgName: 'sprite.png',
+      cssName: '_sprite.scss',
+      padding: 5,
+      imgPath: '/images/' + 'sprite.png'
+    }));
+
+  let imgStream = spriteData.img
+    .pipe(buffer())
+    .pipe(gulpIf(isProd, imagemin([
+      imageminPngquant({
+        speed: 5,
+        quality: [0.6, 0.8]
+      })
+    ])))
+    .pipe(dest(config.sprites.dest));
+
+  let cssStream = spriteData.css
+    .pipe(dest(config.src + '/styles/base/'));
+  return merge(imgStream, cssStream);
+}
+exports.spritePNG = spritePNG;
+
+
+// Копирование папок: favicon, static, fonts
+function copyStatic() {
+  return src(config.static.src)
+    .pipe(dest(config.static.dest));
+}
+exports.copyStatic = copyStatic;
+
+function copyFavicon() {
+  return src(config.src + '/favicon/**/*')
+    .pipe(dest(config.build + '/favicon'));
+}
+exports.copyFavicon = copyFavicon;
+
+function copyFonts() {
+  return src(config.fonts.src)
+    .pipe(dest(config.fonts.dest));
+}
+exports.copyFonts = copyFonts;
+
+
+function reload(done) {
+  browserSync.reload();
+  done();
+}
+
+function serve() {
+
+  browserSync.init({
+    server: config.build,
+    notify: true,
+    open: false
+  });
+
+  watch([config.templates.watch, config.templates.blocks], series(
+    templates,
+    reload
+  ));
+
+  watch(config.styles.blocks, { events: ['add', 'unlink'], delay: 100 }, writeScssBlocks);
+  watch(config.styles.blocks, { events: ['change'], delay: 100 }, scss);
+  watch(config.styles.watch, scss);
+
+  watch([config.scripts.watch, config.scripts.blocks], series(
+    scripts,
+    reload
+  ));
+
+  watch(config.images.watch, series(parallel(imgContent, imgWebp), reload));
+
+  watch(config.images.temp.watch, series(imgTemp, reload));
+
+  watch(config.sprites.svg.watch, series(spriteSVG, reload));
+
+  watch(config.sprites.png.watch, series(spritePNG, reload));
+
+  watch(config.fonts.watch, series(copyFonts, reload));
+
+  watch(config.static.watch, series(copyStatic, reload));
+
+  watch(config.src + '/favicon/**/*', series(copyFavicon, reload));
+
+}
+
+
 exports.default = series(
-  parallel(clean),
-  parallel(templates),
-  parallel(scss, scripts)
+  clean,
+  parallel(templates, writeScssBlocks),
+  parallel(imgContent, imgWebp, imgTemp, spriteSVG, spritePNG),
+  parallel(copyStatic, copyFavicon, copyFonts),
+  parallel(scss, scripts),
+  serve
 );
 
 exports.build = series(
-  parallel(clean),
-  parallel(templates),
-  parallel(scss, stylelint, scripts, esLint)
+  clean,
+  parallel(templates, writeScssBlocks),
+  parallel(imgContent, imgWebp, imgTemp, spriteSVG, spritePNG),
+  parallel(copyStatic, copyFavicon, copyFonts),
+  parallel(scss, scripts)
 );
 
 
@@ -212,7 +428,7 @@ function fileExist(filepath) {
  * @return {array}         Массив из имён блоков
  */
 function getDirectories(ext) {
-  let source = config.blocks;
+  let source = config.blocks + '/';
   return fs.readdirSync(source)
     .filter(item => fs.lstatSync(source + item).isDirectory())
     .filter(item => fileExist(source + item + '/' + item + '.' + ext));

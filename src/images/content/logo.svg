@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="226.50063" height="68.6283" viewBox="0 0 226.50063 68.6283">
+  <g>
+    <text transform="translate(80.40102 37.05628)" font-size="23.39117" fill="#22231e" font-family="Oswald-Medium, Oswald" font-weight="500">COM<tspan x="41.77637" y="0" letter-spacing="-0.042em">P</tspan><tspan x="53.12109" y="0">ANY NAME</tspan></text>
+    <text transform="translate(90.62465 58.27161)" font-size="11.69558" fill="#22231e" font-family="Oswald-Light, Oswald" font-weight="300" letter-spacing="0.19998em">YOUR <tspan x="37.97559" y="0" letter-spacing="0.17493em">T</tspan><tspan x="44.86328" y="0" letter-spacing="0.19797em">A</tspan><tspan x="52.75781" y="0">GLINE HERE</tspan></text>
+    <polygon points="20.193 44.408 6.008 24.645 20.193 4.881 49.562 4.881 62.725 23.221 68.733 23.221 52.066 0 17.688 0 0 24.645 17.688 49.289 50.814 49.289 45.619 44.408 20.193 44.408" fill="#22231e"/>
+    <polygon points="52.066 19.339 18.94 19.339 24.135 24.22 49.562 24.22 63.747 43.983 49.562 63.747 20.193 63.747 7.03 45.407 1.021 45.407 17.688 68.628 52.066 68.628 69.755 43.983 52.066 19.339" fill="#22231e"/>
+  </g>
+</svg>

@@ -1,4 +1,29 @@
 * {
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  position: relative;
+  height: 100%;
+}
+
+body {
+  font: {
+    size: $font-size-base;
+    weight: $font-weight-base;
+    family: $font-family-base;
+  }
+  @include scrollbars(10px, #000, #808080)
+}
+
+.sitepage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &-content {
+    position: relative;
+    flex: 1 0 auto;
+  }
 }
