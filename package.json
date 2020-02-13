@@ -1,20 +1,31 @@
 {
   "name": "gulp-starter",
   "version": "1.0.0",
-  "description": "Gulp starter kit",
+  "description": "Frontend development with pleasure",
   "keywords": [
     "gulp",
     "sass",
     "nunjucks",
     "webpack"
   ],
-  "author": "Dmitrii Konovalov (Sprime)",
+  "author": {
+    "name": "Dmitrii Konovalov",
+    "email": "info@sprime.ru",
+    "url": "https://sprime.ru"
+  },
   "license": "MIT",
   "main": "gulpfile.js",
+  "engines": {
+    "node": ">=8"
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development gulp",
     "prod": "cross-env NODE_ENV=production gulp build"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
