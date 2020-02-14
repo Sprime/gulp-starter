@@ -14,7 +14,8 @@ body {
     weight: $font-weight-base;
     family: $font-family-base;
   }
-  @include scrollbars(10px, #000, #808080)
+
+  @include scrollbars(10px, #000, #808080);
 }
 
 .sitepage {

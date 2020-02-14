@@ -394,12 +394,14 @@ exports.default = series(
   parallel(templates, writeScssBlocks),
   parallel(imgContent, imgWebp, imgTemp, spriteSVG, spritePNG),
   parallel(copyStatic, copyFavicon, copyFonts),
+  parallel(stylelint, esLint),
   parallel(scss, scripts),
   serve
 );
 
 exports.build = series(
   clean,
+  parallel(stylelint, esLint),
   parallel(templates, writeScssBlocks),
   parallel(imgContent, imgWebp, imgTemp, spriteSVG, spritePNG),
   parallel(copyStatic, copyFavicon, copyFonts),

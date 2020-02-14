@@ -38,17 +38,11 @@ if (blockName) {
         if (extension === 'scss') {
           fileContent = `.${blockName} {\n  $block: &;\n}\n`;
           // fileCreateMsg = '';
-        }
-
-        else if (extension === 'js') {
+        } else if (extension === 'js') {
           fileContent = `'use strict';\n`;
-        }
-
-        else if (extension === 'twig') {
+        } else if (extension === 'twig') {
           fileContent = ``;
-        }
-
-        else if (extension === 'images') {
+        } else if (extension === 'images') {
           const imgFolder = `${dirPath}images/`;
           if (fileExist(imgFolder) === false) {
             mkdirp(imgFolder, (err) => {
@@ -70,11 +64,9 @@ if (blockName) {
               console.warn(fileCreateMsg);
             }
           });
-        }
-        else if (extension !== 'images' && extension !== 'md') {
+        } else if (extension !== 'images' && extension !== 'md') {
           console.log(`Файл НЕ создан: ${filePath} (уже существует)`);
-        }
-        else if (extension === 'md') {
+        } else if (extension === 'md') {
           fs.writeFile(`${dirPath}readme.md`, fileContent, (err) => {
             if (err) {
               return console.log(`Файл НЕ создан: ${err}`);
@@ -92,7 +84,6 @@ if (blockName) {
 } else {
   console.log('Отмена операции: не указан блок');
 }
-
 
 
 function uniqueArray(arr) {

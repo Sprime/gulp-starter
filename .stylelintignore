@@ -1,6 +1,7 @@
 src/styles/styles.scss
 src/styles/base/_fonts.scss
-src/styles/base/_sprite.scss
 src/styles/base/_functions.scss
 src/styles/base/_mixins.scss
 src/styles/base/_print.scss
+src/styles/base/_sprite.scss
+src/styles/base/_variables.scss
