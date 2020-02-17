@@ -22,7 +22,21 @@
 
   {% include "./favicons.html" %}
 
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/css/styles.css">
+  <noscript>
+    <link rel="stylesheet" href="/css/styles.css">
+  </noscript>
+
+  {# https://github.com/filamentgroup/loadCSS #}
+  {% if NODE_ENV === 'development'  %}
+  <script>
+    {% include "../../../node_modules/fg-loadcss/dist/cssrelpreload.js" %}
+  </script>
+  {% else %}
+  <script>
+    {% include "../../../node_modules/fg-loadcss/dist/cssrelpreload.min.js" %}
+  </script>
+  {% endif %}
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ site_url }}">

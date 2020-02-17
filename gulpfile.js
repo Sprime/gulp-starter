@@ -146,7 +146,7 @@ function writeScssBlocks(cb) {
 exports.writeScssBlocks = writeScssBlocks;
 
 function stylelint() {
-  return src([config.styles.watch, config.styles.blocks])
+  return src([config.src + '/**/*.scss'])
     .pipe(gulpStylelint({
       failAfterError: true,
       reporters: [{formatter: 'string', console: true}],
@@ -158,6 +158,10 @@ exports.stylelint = stylelint;
 
 // Шаблоны
 function templates() {
+  const manageEnvironment = function(environment) {
+    environment.addGlobal('NODE_ENV', process.env.NODE_ENV);
+  };
+
   return src(config.templates.src)
     .pipe(plumber({
       errorHandler: function (err) {
@@ -167,9 +171,12 @@ function templates() {
     }))
     .pipe(nunjucksRender({
       path: [
-        `${config.src}/templates`,
-        `${config.blocks}`
-      ]
+        __dirname + '/',
+        config.src + '/templates',
+        config.blocks,
+        'node_modules'
+      ],
+      manageEnv: manageEnvironment
     }))
     .pipe(prettyhtml(prettyOption))
     .pipe(gulpIf(isProd, replace('.css', '.min.css')))
@@ -192,7 +199,7 @@ function scripts() {
 exports.scripts = scripts;
 
 function esLint() {
-  return src(config.scripts.src)
+  return src(config.src + '/**/*.js')
     .pipe(gulpEslint())
     .pipe(gulpEslint.format())
     .pipe(gulpEslint.failAfterError())
@@ -372,19 +379,40 @@ function serve() {
     reload
   ));
 
-  watch(config.images.watch, series(parallel(imgContent, imgWebp), reload));
+  watch(config.images.watch, series(
+    parallel(imgContent, imgWebp),
+    reload
+  ));
 
-  watch(config.images.temp.watch, series(imgTemp, reload));
+  watch(config.images.temp.watch, series(
+    imgTemp,
+    reload
+  ));
 
-  watch(config.sprites.svg.watch, series(spriteSVG, reload));
+  watch(config.sprites.svg.watch, series(
+    spriteSVG,
+    reload
+  ));
 
-  watch(config.sprites.png.watch, series(spritePNG, reload));
+  watch(config.sprites.png.watch, series(
+    spritePNG,
+    reload
+  ));
 
-  watch(config.fonts.watch, series(copyFonts, reload));
+  watch(config.fonts.watch, series(
+    copyFonts,
+    reload
+  ));
 
-  watch(config.static.watch, series(copyStatic, reload));
+  watch(config.static.watch, series(
+    copyStatic,
+    reload
+  ));
 
-  watch(config.src + '/favicon/**/*', series(copyFavicon, reload));
+  watch(config.src + '/favicon/**/*', series(
+    copyFavicon,
+    reload
+  ));
 
 }
 
