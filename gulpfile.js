@@ -67,7 +67,7 @@ let postCssPlugins = [
 
 function clean() {
   return del([
-    `${config.build}/**/*`
+    config.build + '/**/*'
   ])
 }
 exports.clean = clean;
@@ -95,7 +95,7 @@ function scss() {
     }))
     .pipe(postcss(postCssPlugins))
     .pipe(gulpIf(isProd, mincss({
-      compatibility: 'ie8', level: {
+      compatibility: 'ie10', level: {
         1: {
           specialComments: 0,
           removeEmpty: true,
