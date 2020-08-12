@@ -1,4 +1,3 @@
-/* global exports process console __dirname Buffer */
 /* eslint-disable no-console */
 'use strict';
 

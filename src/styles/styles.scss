@@ -3,9 +3,11 @@
 @import 'base/mixins';
 @import 'base/sprite';
 
+@import 'bootstrap/scss/bootstrap.scss';
+
 @import 'base/fonts';
 
-@import 'normalize.css/normalize.css';
+// @import 'normalize.css/normalize.css';
 @import 'base/general';
 
 @import 'blocks';

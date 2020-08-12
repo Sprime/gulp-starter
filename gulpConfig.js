@@ -1,5 +1,3 @@
-/* global module */
-
 let config = {
   src: './src',
   build: './build',
